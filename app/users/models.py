@@ -11,7 +11,6 @@ class User(Base):
     last_name: Mapped[str_nullable]
     birth_date: Mapped[date_not_null]
 
-    is_user: Mapped[bool] = mapped_column(default=True, server_default=text('true'), nullable=False)
     is_manager : Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
     is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
 

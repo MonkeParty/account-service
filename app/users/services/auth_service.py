@@ -12,6 +12,8 @@ from app.database import refresh_storage
 async def sign_up(user_data: SUserRegister) -> dict:
     user = await UserDAO.find_by_email(email=user_data.email)
 
+    print('bad')
+
     if user:
         raise UserAlreadyExistsException
 
@@ -44,6 +46,9 @@ async def log_in(response: Response, auth_data: SUserLogin) -> dict:
 
     if verify_password(plain_password=auth_data.password, hashed_password=user.password):
         claims = {
+            "id": user.id,
+            "name": user.last_name + " " + user.first_name + " " + user.middle_name,
+            "has_sub": user.has_sub,
             "sub": user.email,
             "is_admin": user.is_admin,
             "is_manager": user.is_manager

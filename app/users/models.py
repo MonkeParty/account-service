@@ -2,6 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base, str_unique_not_null, int_pk, str_nullable, str_not_null, date_not_null
 
+
 class User(Base):
     id: Mapped[int_pk]
     email: Mapped[str_unique_not_null]
@@ -13,6 +14,7 @@ class User(Base):
 
     is_manager : Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
     is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
+    has_sub: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id})"

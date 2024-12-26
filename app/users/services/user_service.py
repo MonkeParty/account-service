@@ -16,7 +16,8 @@ async def get_current_user(request: Request) -> dict:
         'first_name': user.first_name,
         'last_name': user.last_name,
         'middle_name': user.middle_name,
-        'birth_date': user.birth_date
+        'birth_date': user.birth_date,
+        "has_sub": user.has_sub
     }
 
 async def update_current_user_common_info(request: Request, user_data: SUserUpdateCommonInfo):

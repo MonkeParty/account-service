@@ -1,4 +1,5 @@
 from fastapi import Response
+from kafka import KafkaProducer
 
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException, \
     InvalidRefreshTokenException
@@ -7,7 +8,17 @@ from app.users.schemas import SUserRegister, SUserLogin, SUserRefresh
 from app.users.security import get_password_hash, verify_password, create_access_token, create_refresh_token, get_refresh_claims
 from app.config import settings
 from app.database import refresh_storage
+from app.events.writer import KafkaEventWriter
+from app.events.events import Event, EventType
 
+
+
+event_writer = KafkaEventWriter(
+    topic=settings.event_bus_topic_name,
+    kafka_producer=KafkaProducer(
+        bootstrap_servers=settings.kafka_bootstrap_server,
+    )
+)
 
 async def sign_up(user_data: SUserRegister) -> dict:
     user = await UserDAO.find_by_email(email=user_data.email)
@@ -18,15 +29,22 @@ async def sign_up(user_data: SUserRegister) -> dict:
     user_dict = user_data.model_dump()
     user_dict['password'] = get_password_hash(user_dict['password'])
 
-    if (user_data.email == settings.ADMIN_USERNAME) and (user_data.password == settings.ADMIN_PASSWORD):
-
-        """
-        In future here we need to send check-authorities message to kafka auth topic
-        """
-
+    is_admin = (user_data.email == settings.ADMIN_USERNAME) and (user_data.password == settings.ADMIN_PASSWORD)
+    if is_admin:
         user_dict['is_admin'] = True
 
     new_instance = await UserDAO.add(**user_dict)
+
+    if is_admin:
+        event_writer.send_event(Event(
+            EventType.SetUserRole,
+            f'{new_instance.id} admin',
+        ))
+    else:
+        event_writer.send_event(Event(
+            EventType.SetUserRole,
+            f'{new_instance.id} user',
+        ))
 
     return {
         "id": new_instance.id,

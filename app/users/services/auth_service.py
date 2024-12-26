@@ -14,9 +14,9 @@ from app.events.events import Event, EventType
 
 
 event_writer = KafkaEventWriter(
-    topic=settings.event_bus_topic_name,
+    topic=settings.EVENT_BUS_TOPIC_NAME,
     kafka_producer=KafkaProducer(
-        bootstrap_servers=settings.kafka_bootstrap_server,
+        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,
     )
 )
 

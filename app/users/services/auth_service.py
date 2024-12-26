@@ -29,6 +29,7 @@ async def sign_up(user_data: SUserRegister) -> dict:
     new_instance = await UserDAO.add(**user_dict)
 
     return {
+        "id": new_instance.id,
         "email": new_instance.email,
         "first_name": new_instance.first_name,
         "last_name": new_instance.last_name,

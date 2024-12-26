@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     ACCESS_SECRET_KEY: str
     REFRESH_SECRET_KEY: str
     ALGORITHM: str
+    KAFKA_BOOTSTRAP_SERVER: str
+    EVENT_BUS_TOPIC_NAME: str
     model_config = SettingsConfigDict(
         env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
     )

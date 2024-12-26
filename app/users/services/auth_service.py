@@ -12,8 +12,6 @@ from app.database import refresh_storage
 async def sign_up(user_data: SUserRegister) -> dict:
     user = await UserDAO.find_by_email(email=user_data.email)
 
-    print('bad')
-
     if user:
         raise UserAlreadyExistsException
 

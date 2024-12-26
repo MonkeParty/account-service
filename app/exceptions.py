@@ -18,6 +18,9 @@ TokenNotFoundException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
 InvalidTokenException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                detail='Некорректный JWT-токен')
 
+InvalidRefreshTokenException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                             detail='Некорректный Refresh-токен')
+
 NoSubInTokenException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                   detail='Отсутствует subject в JWT-токене')
 

@@ -1,4 +1,4 @@
-from fastapi import Request, Depends
+from fastapi import Request
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
@@ -24,7 +24,7 @@ def create_refresh_token(data: dict) -> str:
     encoded_jwt = jwt.encode(to_encode, auth_config['refresh_secret_key'], algorithm=auth_config['algorithm'])
     return encoded_jwt
 
-def get_token_from_request(request: Request) -> str:
+def get_access_token_from_request(request: Request) -> str:
     token_from_cookies = request.cookies.get('auth_token')
     token_from_header = request.headers.get('Authorization')
 
@@ -52,7 +52,7 @@ async def token_filter(claims: dict):
 
 
 async def get_access_claims(request: Request) -> dict:
-    token = get_token_from_request(request)
+    token = get_access_token_from_request(request)
     auth_config = get_auth_config()
 
     try:
@@ -64,8 +64,7 @@ async def get_access_claims(request: Request) -> dict:
 
     return access_claims
 
-async def get_refresh_claims(request: Request) -> dict:
-    token = get_token_from_request(request)
+async def get_refresh_claims(token: str) -> dict:
     auth_config = get_auth_config()
 
     try:

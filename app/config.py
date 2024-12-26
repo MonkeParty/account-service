@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
+    REDIS_PORT: str
+    REDIS_HOST: str
+    REDIS_DB: str
+    REDIS_PASSWORD: str
     ADMIN_USERNAME: str
     ADMIN_PASSWORD: str
     ACCESS_SECRET_KEY: str
@@ -22,6 +26,9 @@ settings = Settings()
 def get_db_url():
     return (f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@"
             f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}")
+
+def get_redis_url():
+    return f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}"
 
 def get_auth_config():
     return {

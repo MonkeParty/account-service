@@ -42,3 +42,29 @@ class SUserLogin(BaseModel):
                 detail="Некорректный формат электронного адреса"
             )
         return value
+
+class SUserRefresh(BaseModel):
+    refresh_token: str = Field(..., description="Refresh токен")
+
+class SUserUpdateCommonInfo(BaseModel):
+    first_name: str = Field(..., min_length=2, max_length=50, description="Имя от 2 до 50 символов")
+    middle_name: str = Field(..., min_length=2, max_length=50, description="Фамилия от 2 до 50 символов")
+    last_name: str = Field(..., min_length=2, max_length=50, description="Отчество от 2 до 50 символов")
+    birth_date: date = Field(..., description="Дата рождения")
+
+    @field_validator("birth_date")
+    def validate_birth_date(cls, value: date) -> date:
+        if not value < date.today():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Дата рождения должна быть в прошлом"
+            )
+        return value
+
+class SUserUpdatePassword(BaseModel):
+    old_password: str = Field(..., min_length=5, max_length=50, description="Старый пароль, от 5 до 50 символов")
+    new_password: str = Field(..., min_length=5, max_length=50, description="Новый пароль пароль, от 5 до 50 символов")
+
+class SUserUpdateEmail(BaseModel):
+    new_email: str = Field(..., description="Новый адрес электронной почты")
+    password: str = Field(..., min_length=5, max_length=50, description="Пароль, от 5 до 50 символов")

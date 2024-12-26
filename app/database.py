@@ -1,12 +1,14 @@
 from datetime import datetime, date
 from typing import Annotated
 
+import redis.asyncio
+
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped
 from sqlalchemy.testing.schema import mapped_column
 
-from app.config import get_db_url
+from app.config import get_db_url, settings
 
 DATABASE_URL = get_db_url()
 
@@ -20,6 +22,13 @@ str_unique_not_null = Annotated[str, mapped_column(unique=True, nullable=False)]
 str_nullable = Annotated[str, mapped_column(nullable=True)]
 str_not_null = Annotated[str, mapped_column(nullable=False)]
 date_not_null = Annotated[date, mapped_column(nullable=False)]
+
+refresh_storage = redis.asyncio.Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB,
+    password=settings.REDIS_PASSWORD
+)
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
